@@ -10,9 +10,13 @@ The goal of this project is to design and build a browser-based or CLI ticket vi
 
 ## Installation
 
-**will update later**
+Simply download the repo and unzip.
 
 ## Usage
 
-**will update later**
+Users need to have a Zendesk account with API token authorization enabled.
+
+1. Create a file called user_info.txt in the same folder as the python files.
+2. Write the email and API token associated with the account on seperate lines & save.
+3. Run main.py
 
