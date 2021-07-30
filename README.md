@@ -17,6 +17,6 @@ Simply download the repo and unzip.
 Users need to have a Zendesk account with API token authorization enabled.
 
 1. Create a file called user_info.txt in the same folder as the python files.
-2. Write the email and API token associated with the account on seperate lines & save.
+2. Write the email and API token associated with the account on separate lines & save.
 3. Run main.py
 
