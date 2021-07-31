@@ -1,15 +1,14 @@
-import requests
-import base64
+import requests 
 
 """
-This module handles manages the interactions between the user and 
+This class handles manages the interactions between the user and 
 the Zendesk API.
 """
 
 class Manager:
 
-    tickets = []
     username = ''
+    user_in = ''
     api_token = ''
     web_address = "https://zccwright.zendesk.com"
     authenticated = False
@@ -33,35 +32,57 @@ class Manager:
                 self.username = holdinglist[0]
                 self.api_token = holdinglist[1]
 
-            user_in = self.username + "/token" 
+            self.user_in = self.username + "/token" 
 
             # Establish a connection with the API and verify user credentials by querying job statuses
-            r = requests.get('https://zccwright.zendesk.com/api/v2/job_statuses', auth=(user_in, self.api_token))
+            r = requests.get('https://zccwright.zendesk.com/api/v2/job_statuses', auth=(self.user_in, self.api_token))
 
             # Check the status code to verify good connection
             if r.status_code != 200:
                 print(f"Problem with connection. Status code: {r.status_code}")
             else:
-                print("Connection Successful")
+                print("Connection to API successful")
                 self.authenticated = True
         
 
-
-    # This method refreshes the dictionary of tickets by querying the API
-    def query_tickets(self):
-        pass
-
     # This method displays all tickets currently in the tickets dictionary
-    def viewAll(self):
-        pass
+    def viewAll(self, tl):
+        
+        # TODO: Send a request for a paginated ticket base organized in 25-ticket increments
+        payload = {"page[size]" : "25"}
+        r = requests.get('https://zccwright.zendesk.com/api/v2/tickets', auth=(self.user_in, self.api_token), params=payload)
+        response = r.json()
+
+        # TODO: Pass output to formatter to store and print it
+        tl.parse_page(response)
+        # translator object holds a dictionary of the current 25 tickets on display and formats them to be printed. Recreated with every page transition.
+
+        # TODO: Make a forward/backwards loop controlled by user input
+
+        print("Type - to page back, + to page forward, help for help, quit to exit")
+        choice = input(">> ")
+        while choice != "quit":
+            if choice == '+':
+                pass
+            elif choice == '-':
+                pass
+            elif choice == "help":
+                pass
+            else:
+                print("Command not recognized")
+                choice = input(">> ")
+        print("Returning to menu")
+        self.print_menu()
+        return
+
+
 
     # This method displays one specifc ticket from the tickets dictionary
-    def viewOne(self):
-        pass
+    def viewOne(self, tl):
+        id = input("Enter the ID of the ticket you want to view: ")
     
     def print_menu(self):
         print("List of commands: ")
         print("1. View all tickets")
         print("2. View an individual ticket")
-        print("3. Refresh tickets")
-        print("4. Quit")
+        print("3. Quit")
