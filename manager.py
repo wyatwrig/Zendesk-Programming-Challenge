@@ -18,7 +18,6 @@ class Manager:
     # pagination variables keep track of current page.
     cursor_next = ''
     cursor_previous = ''
-    has_more = False
 
     def __init__(self, tl):
         print("Welcome to the Zendesk CLI ticket viewer")
@@ -36,7 +35,6 @@ class Manager:
             payload = {"page[size]" : "25"}
             r = requests.get("https://zccwright.zendesk.com/api/v2/tickets", auth=(self.user_in, self.api_token), params=payload)
             response = r.json()
-            self.has_more = response["meta"]["has_more"]
             self.cursor_next = response["links"]["next"]
             self.cursor_previous = response["links"]["prev"]
             tl.parse_page(response)
@@ -78,31 +76,32 @@ class Manager:
 
     # provides pagination functionality
     def page(self, tl, page_token):
-        # TODO: fix instance not displaying on first uncompleted call
-        """
-            This method currently has a problem where going forward or backwards
-            isn't bounded correcly and breaks the functionality. Probably has something to 
-            do with not checking self.has_more being based on the prior call.
-        """
-        if self.has_more == True:
-            if page_token == '+':
-                r = requests.get(self.cursor_next, auth=(self.user_in, self.api_token))
-                response = r.json()
-                tl.parse_page(response)
-                tl.print_page()
-                self.has_more = response["meta"]["has_more"]
-                self.cursor_next = response["links"]["next"]
-                self.cursor_previous = response["links"]["prev"]
-            elif page_token == '-':
-                r = requests.get(self.cursor_previous, auth=(self.user_in, self.api_token))
-                response = r.json()
-                tl.parse_page(response)
-                tl.print_page()
-                self.has_more = response["meta"]["has_more"]
-                self.cursor_next = response["links"]["next"]
-                self.cursor_previous = response["links"]["prev"]
-        else:
-            print(f"No further tickets in the {page_token} direction")
+        if page_token == '+':
+            r = requests.get(self.cursor_next, auth=(self.user_in, self.api_token))
+            response = r.json()
+            tl.parse_page(response)
+            tl.print_page()
+            link_forward = response["links"]["next"]
+            link_backwards = response["links"]["prev"]
+            if link_forward != None:
+                self.cursor_next = link_forward
+                self.cursor_previous = link_backwards
+            else:
+                print("End of forwards pagination")
+                
+        elif page_token == '-':
+            r = requests.get(self.cursor_previous, auth=(self.user_in, self.api_token))
+            response = r.json()
+            tl.parse_page(response)
+            tl.print_page()
+            link_forward = response["links"]["next"]
+            link_backwards = response["links"]["prev"]
+            if link_forward != None:
+                self.cursor_next = link_forward
+                self.cursor_previous = link_backwards
+            else:
+                print("End of backwards pagination")
+
         
 
     # displays one specifc ticket from the tickets dictionary
