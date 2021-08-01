@@ -2,10 +2,9 @@ import manager, translator
 
 def main():
 
-    # TODO: Create REPL loop
-
-    repl = manager.Manager()
     tl = translator.Translator()
+    repl = manager.Manager(tl)
+    
     choice = '-1'
 
     repl.print_menu()
@@ -15,20 +14,28 @@ def main():
 
     # TODO: Sanitize input with regex
 
-    while choice != '3':
+    while choice != 'quit':
 
-        # View all tickets
-        if choice == '1':
-            repl.viewAll(tl)
+        # page forward
+        if choice == '+':
+            repl.page(tl, '+')
+            repl.print_menu()
             choice = input(">> ")
 
-        # View an individual ticket
-        elif choice == '2':
-            repl.viewOne(tl)
+        # page backwards
+        elif choice == '-':
+            repl.page(tl, '-')
+            repl.print_menu()
             choice = input(">> ")
 
-        # Help
+        # help
         elif choice == 'help':
+            repl.print_menu()
+            choice = input(">> ")
+        
+        # view individual ticket details
+        elif choice == 'view':
+            repl.view(tl)
             repl.print_menu()
             choice = input(">> ")
 
