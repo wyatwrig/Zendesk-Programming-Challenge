@@ -3,7 +3,9 @@ import manager, translator
 def main():
 
     tl = translator.Translator()
-    repl = manager.Manager(tl)
+    repl = manager.Manager()
+    repl.authenticate()
+    repl.initial_page(tl)
     
     choice = '-1'
 
@@ -11,8 +13,6 @@ def main():
     print("Type help at any time to redisplay the menu")
 
     choice = input(">> ")
-
-    # TODO: Sanitize input with regex
 
     while choice != 'quit':
 

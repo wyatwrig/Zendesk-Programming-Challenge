@@ -1,7 +1,8 @@
 """
 This class serves as a mechanism to transform the responses from 
 the Zendesk API from JSON to Python data structures for easy access and
-it also provides the output to the terminal.
+it also provides the output to the terminal. Holds the current page
+state.
 """
 
 class Translator:
